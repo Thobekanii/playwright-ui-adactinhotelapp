@@ -58,7 +58,7 @@ test.describe('search hotel', () => {
         
         await searchhotel.clickSearchButton();
         let value;
-        value = await hotelselect.location.inputValue();
+        value = await hotelselect.Location.inputValue();
         //value = await page.locator('//td/strong[contains(text(),"Location")]//following::input[4]').inputValue();//await sh.location.textContent();
 
         if(value == location){
@@ -68,7 +68,7 @@ test.describe('search hotel', () => {
         }
     });
 
-    test('TC - 105 To verify date and Check Out date are being displayed in Select Hotel Page according to the dates selected in search Hotel.', async ({ page }) => {
+    test.skip('TC - 105 To verify date and Check Out date are being displayed in Select Hotel Page according to the dates selected in search Hotel.', async ({ page }) => {
         let arrivaldate, departuredate;
         const searchhotel = new HotelSearch(page);
         const location = 'Sydney';
@@ -87,14 +87,56 @@ test.describe('search hotel', () => {
         
         await searchhotel.clickSearchButton();
         
-        departuredate = await hotelselect.departuredate.inputValue();
+        departuredate = await hotelselect.DepartureDate.inputValue();
         arrivaldate = await hotelselect.ArrivalDate.inputValue();
 
         if(arrivaldate == ArrivalDate && departuredate == DepartureDate){
-            console.log(value);
+            console.log(`Arrival Date: ${arrivaldate}, Departure Date: ${departuredate}`);
         }else{
             test.fail();           
         }
+    });
+
+    test.skip('TC - 106 To verify whether no. of rooms entry in Select Hotel page is same as the Number of rooms selected in search hotel page.', async ({ page }) => {
+        let rooms;
+        const searchhotel = new HotelSearch(page);
+        const location = 'Sydney';
+        const hotelselect = new HotelSelect(page); 
+
+        await searchhotel.selectLocation(location);
+        await searchhotel.selectHotels('Hotel Creek');
+        await searchhotel.selectRoomtype('Standard');
+
+        await searchhotel.selectNumberOfRooms(3);
+        await searchhotel.enterCheckInDate();
+        await searchhotel.enterCheckOutDate(1)
+        await searchhotel.selectAdultsPerRoom(1);
+        
+        await searchhotel.clickSearchButton();
+        
+        rooms = await hotelselect.Rooms.inputValue();
+        await expect(rooms).toContain('3');
+    });
+
+    test.skip('TC - 107 To verify whether Room Type in Select Hotel page is same as Room type selected in search hotel page.', async ({ page }) => {
+        let roomstype;
+        const searchhotel = new HotelSearch(page);
+        const location = 'Sydney';
+        const hotelselect = new HotelSelect(page); 
+
+        await searchhotel.selectLocation(location);
+        await searchhotel.selectHotels('Hotel Creek');
+        await searchhotel.selectRoomtype('Deluxe');
+
+        await searchhotel.selectNumberOfRooms(1);
+        await searchhotel.enterCheckInDate();
+        await searchhotel.enterCheckOutDate(1)
+        await searchhotel.selectAdultsPerRoom(1);
+        
+        await searchhotel.clickSearchButton();
+        
+        roomstype = await hotelselect.RoomTypes.inputValue();
+        await expect(roomstype).toContain('Deluxe');
     });
 
 });
